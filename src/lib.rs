@@ -51,31 +51,18 @@ pub struct HydaStyle {
     color: Option<Color>,
 }
 
-fn get_style_recursive(styles: &HashMap<String, HydaStyle>, st: String) -> Option<&HydaStyle> {
-
-    let mut st_vec: Vec<&str> = st.split(" ").collect();
-
-    let get_style = styles.get(&st);
-
-    if let Some(style) = get_style {
-        return get_style;
+fn get_style_recursive<'a>(styles: &'a HashMap<String, HydaStyle>, st: &str) -> Option<&'a HydaStyle> {
+    if let Some(style) = styles.get(st) {
+        return Some(style);
     }
-    else {
-        st_vec.remove(0);
 
-        if st_vec.len() == 0 {
-            return None;
-        }
-
-        let new_st: String = st_vec.join(" ");
-
-        return get_style_recursive(styles, new_st);
-    }
+    let (_, st) = st.split_once(' ')?;
+    get_style_recursive(styles, st)
 }
 
 fn get_f32_from_style(styles: &HashMap<String, HydaStyle>, st: String, item: &str) -> f32 {
 
-    let get_style = get_style_recursive(styles, st.clone()).unwrap();
+    let get_style = get_style_recursive(styles, &st).unwrap();
 
     let final_var: Option<f32> = match item {
         "font-size" => get_style.font_size,
@@ -100,7 +87,7 @@ fn get_f32_from_style(styles: &HashMap<String, HydaStyle>, st: String, item: &st
 
 fn get_i32_from_style(styles: &HashMap<String, HydaStyle>, st: String, item: &str) -> i32 {
 
-    let get_style = get_style_recursive(styles, st.clone()).unwrap();
+    let get_style = get_style_recursive(styles, &st).unwrap();
 
     let final_var: Option<i32> = match item {
         "font-weight" => get_style.font_weight,
@@ -131,7 +118,7 @@ fn get_uirect_from_style(
     is_inlined: bool, 
     is_first_child: bool) -> UiRect {
 
-    let get_style = get_style_recursive(styles, st.clone()).unwrap();
+    let get_style = get_style_recursive(styles, &st).unwrap();
 
     let final_var: Option<UiRect> = match item {
         "margin" => get_style.margin,
@@ -195,7 +182,7 @@ fn get_uirect_from_style(
 
 fn get_flex_direction_from_style(styles: &HashMap<String, HydaStyle>, st: String, item: &str) -> FlexDirection {
 
-    let get_style = get_style_recursive(styles, st.clone()).unwrap();
+    let get_style = get_style_recursive(styles, &st).unwrap();
 
     let final_var: Option<FlexDirection> = match item {
         "flex-direction" => get_style.flex_direction,
@@ -220,7 +207,7 @@ fn get_flex_direction_from_style(styles: &HashMap<String, HydaStyle>, st: String
 
 fn get_val_from_style(styles: &HashMap<String, HydaStyle>, st: String, item: &str) -> Val {
 
-    let get_style = get_style_recursive(styles, st.clone()).unwrap();
+    let get_style = get_style_recursive(styles, &st).unwrap();
 
     let final_var: Option<Val> = match item {
         "width" => get_style.width,
@@ -246,7 +233,7 @@ fn get_val_from_style(styles: &HashMap<String, HydaStyle>, st: String, item: &st
 
 fn get_color_from_style(styles: &HashMap<String, HydaStyle>, st: String, item: &str) -> Color {
 
-    let get_style = get_style_recursive(styles, st.clone()).unwrap();
+    let get_style = get_style_recursive(styles, &st).unwrap();
 
     let final_var: Option<Color> = match item {
         "color" => get_style.color,
@@ -271,7 +258,7 @@ fn get_color_from_style(styles: &HashMap<String, HydaStyle>, st: String, item: &
 
 fn get_display_from_style(styles: &HashMap<String, HydaStyle>, st: String) -> HydaDisplay {
 
-    let get_style = get_style_recursive(styles, st.clone()).unwrap();
+    let get_style = get_style_recursive(styles, &st).unwrap();
 
     if let Some(v) = &get_style.display {
         return v.clone();
@@ -291,7 +278,7 @@ fn get_display_from_style(styles: &HashMap<String, HydaStyle>, st: String) -> Hy
 
 fn get_font_style_from_style(styles: &HashMap<String, HydaStyle>, st: String) -> HydaFontStyle {
 
-    let get_style = get_style_recursive(styles, st.clone()).unwrap();
+    let get_style = get_style_recursive(styles, &st).unwrap();
 
     if let Some(v) = &get_style.font_style {
         return v.clone();
