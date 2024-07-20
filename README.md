@@ -52,3 +52,12 @@ Bevy Hyda is a system that allows you to load HTML sites in your Bevy app/game. 
 - And you're done! You can just build & run your project and you're going to see your wonderful HTML file displayed in Bevy! :D
 
   If you want to see the full code, you can check out the examples folder in this repo!
+
+## Contributing.
+
+If you want to contribute:
+- I wanna start by saying: Thank you so much for wanting to contribute! I appreciate it a lot! :')
+- If you have any bug or issue that you want to report or want to propose an idea and don't know how to code it, feel free to open an [issue](https://github.com/TheNachoBIT/bevy_hyda/issues)!
+- If you want to contribute with anything code-wise, feel free to open a Pull Request!
+
+Aaaaaand i guess that's it! Thank you so much for reading and i hope you like Bevy Hyda! **Have a great day/night!** :D
