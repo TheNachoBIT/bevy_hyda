@@ -3,7 +3,7 @@ use bevy_hyda::BevyHydaPlugin;
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
-    let mut camera = Camera2dBundle::default();
+    let camera = Camera2dBundle::default();
     commands.spawn(camera);
 
     let open_html = bevy_hyda::html_file("assets/test.html".to_string());
