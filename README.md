@@ -47,6 +47,8 @@ Bevy Hyda is a system that allows you to load HTML sites in your Bevy app/game. 
   ```rs
   get_html.spawn_ui(&mut commands, &asset_server);
   ```
+  **WARNING:** Make sure that before spawning the UI, you have already any type of camera spawned in your scene.
+
 - And you're done! You can just build & run your project and you're going to see your wonderful HTML file displayed in Bevy! :D
 
   If you want to see the full code, you can check out the examples folder in this repo!
