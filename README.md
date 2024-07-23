@@ -12,8 +12,7 @@ Bevy Hyda is a system that allows you to load HTML sites in your Bevy app/game. 
 
 ## Websites running with Bevy Hyda.
 - The First CSS Zen Garden Page (no custom CSS): ![image](https://github.com/user-attachments/assets/15ee88ce-1916-48f5-bd36-05083c8136f2)
-- The first WWW website (with Custom "style.css" added): **BRUH THE STEAM FRIEND LOL (gimmie a sec)**
-
+- The first WWW website (with Custom "style.css" added): ![image](https://github.com/user-attachments/assets/80eba855-1e6f-42fa-945b-e20f04487384)
 
 ## Installation.
 - First, make sure that you're using Bevy 0.14.0 (and up) in your project.
