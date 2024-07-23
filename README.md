@@ -30,7 +30,7 @@ Bevy Hyda is a system that allows you to load HTML sites in your Bevy app/game. 
 
 ## How to use it?
 - First, in your code, you add the `HydaBevyPlugin` to your Bevy app with `add_plugins()`.
-- After that, inside of a setup system that contains a `mut Commands` and a `Res<AssetServer>` (could've be an existing one or a new one, its up to you :D), initialize a `HydaComponent` by opening an HTML file with `html_file()` or use a string with `html_string()`:
+- After that, inside of a setup system that contains a `mut Commands` and a `Res<AssetServer>` (could've be an existing one or a new one, its up to you :D), initialize a `HydaAST` by opening an HTML file with `html_file()` or use a string with `html_string()`:
   ```rs
   let get_html = bevy_hyda::html_file("assets/path/to.html".to_string());
   ```
