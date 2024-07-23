@@ -5,6 +5,8 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.14.0"
+ahash = "0.8.11"
+ego-tree = "0.6.2"
 lightningcss = "1.0.0-alpha.57"
-quick-xml = { version = "0.35.0", features = ["serialize"] }
-serde = "1.0.203"
+markup5ever = "0.12.1"
+scraper = "0.19.1"
