@@ -5,9 +5,12 @@ html {
 	font-size: 1.17em;
 	width: 100vw;
 	height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 body {
+	display: block;
 	margin: 8px;
 }
 

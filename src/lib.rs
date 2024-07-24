@@ -87,7 +87,7 @@ impl Default for BevyHydaStyle {
             font_size: None,
             width: Some(Val::Auto),
             height: Some(Val::Auto),
-            flex_direction: Some(bevy::ui::FlexDirection::Column),
+            flex_direction: Some(bevy::ui::FlexDirection::Row),
             flex_wrap: Some(bevy::ui::FlexWrap::NoWrap),
             margin: Some(UiRect::all(Val::Px(0.0))),
             padding: Some(UiRect::all(Val::Px(0.0))),
@@ -424,6 +424,7 @@ fn compose_final_style(styles: &Vec<HydaStyleSheet>, parent_style: &BevyHydaStyl
                 add_if_not_none!(get_style, s.bevy_style, width);
                 add_if_not_none!(get_style, s.bevy_style, height);
                 add_if_not_none!(get_style, s.bevy_style, flex_direction);
+                add_if_not_none!(get_style, s.bevy_style, flex_wrap);
                 add_if_not_none!(get_style, s.bevy_style, margin);
                 add_if_not_none!(get_style, s.bevy_style, padding);
 
@@ -532,17 +533,21 @@ fn get_default_firasans(weight: f32) -> String {
 
 impl HydaAST {
     pub fn spawn_ui(&self, commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
-        return self.spawn_ui_impl(commands, asset_server, &BevyHydaStyle::default(), &mut Vec::new());
+        return self.spawn_ui_impl(commands, asset_server, &BevyHydaStyle::default(), &mut Vec::new()).0;
     }
 
-    pub fn spawn_ui_impl(&self, commands: &mut Commands, asset_server: &Res<AssetServer>, parent_style: &BevyHydaStyle, text_section_vector: &mut Vec<TextSection>) -> Entity {
+    pub fn spawn_ui_impl(&self, commands: &mut Commands, asset_server: &Res<AssetServer>, parent_style: &BevyHydaStyle, text_section_vector: &mut Vec<TextSection>) -> (Entity, bool) {
         match self {
             HydaAST::HElement { tag_name, content, style, .. } => {
 
                 let mut child_vec: Vec<Entity> = Vec::new();
 
                 for c in content {
-                    child_vec.push(c.spawn_ui_impl(commands, asset_server, &style, text_section_vector));
+                    let final_c = c.spawn_ui_impl(commands, asset_server, &style, text_section_vector);
+
+                    if !final_c.1 {
+                        child_vec.push(final_c.0);
+                    }
                 }
 
                 if !is_tag_inlined_text(&tag_name) {
@@ -569,6 +574,7 @@ impl HydaAST {
                     lightningcss::properties::display::Display::Keyword(_) => todo!()
                 }
 
+                let mut is_empty: bool = false;
                 let mut result = if !is_tag_inlined_text(&tag_name) {
                     commands.spawn(
                         NodeBundle {
@@ -589,6 +595,7 @@ impl HydaAST {
                     })
                 }
                 else {
+                    is_empty = true;
                     commands.spawn_empty()
                 };
 
@@ -600,7 +607,7 @@ impl HydaAST {
                     result.add_child(c);
                 }
 
-                return result.id();
+                return (result.id(), is_empty);
             },
             HydaAST::HText { text } => {
                 let new_text = TextSection::new(
@@ -616,9 +623,9 @@ impl HydaAST {
 
                 text_section_vector.push(new_text);
 
-                return commands.spawn_empty().id();
+                return (commands.spawn_empty().id(), true);
             },
-            _ => { return commands.spawn_empty().id(); }
+            _ => { return (commands.spawn_empty().id(), true); }
         }
     }
 }
