@@ -2,7 +2,7 @@
 ## Run HTML & CSS in the Bevy game engine!
 
 ## WARNING:
-- This is 0.1.1, meaning that it can render basic HTML and CSS stuff.
+- This is 0.1.2, meaning that it can render basic HTML and CSS stuff.
 - I've made this in two weeks in my free time for fun.
 - Source code is probably ***UGLY***. (Feel free to send PRs or contribute to make the code much better :D).
 - I'm not an expert using GitHub and this is my first "crate" ;_;, so please feel free to give any advice or point out if i'm doing something wrong in this repository.
