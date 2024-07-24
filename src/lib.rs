@@ -253,8 +253,8 @@ impl BevyHydaStyle {
         let mut final_height: Option<Val> = None;
         let mut final_flex_direction: Option<bevy::ui::FlexDirection> = None;
         let mut final_flex_wrap: Option<bevy::ui::FlexWrap> = None;
-        let mut final_margin: Option<UiRect> = Some(UiRect::all(Val::Px(0.0)));
-        let mut final_padding: Option<UiRect> = Some(UiRect::all(Val::Px(0.0)));
+        let mut final_margin: Option<UiRect> = None;
+        let mut final_padding: Option<UiRect> = None;
         let mut final_display: Option<lightningcss::properties::display::Display> = None;
         let mut final_justify_content: Option<bevy::ui::JustifyContent> = None;
         let mut final_align_content: Option<bevy::ui::AlignContent> = None;
@@ -415,7 +415,7 @@ fn compose_final_style(styles: &Vec<HydaStyleSheet>, parent_style: &BevyHydaStyl
     for s in styles {
         for nid in &s.node_ids {
             if *nid == id {
-                //dbg!(&s.bevy_style, &id);
+                dbg!(&s.bevy_style, &id);
 
                 add_if_not_none!(get_style, s.bevy_style, color);
                 add_if_not_none!(get_style, s.bevy_style, background_color);
