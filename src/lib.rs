@@ -415,7 +415,7 @@ fn compose_final_style(styles: &Vec<HydaStyleSheet>, parent_style: &BevyHydaStyl
     for s in styles {
         for nid in &s.node_ids {
             if *nid == id {
-                dbg!(&s.bevy_style, &id);
+                //dbg!(&s.bevy_style, &id);
 
                 add_if_not_none!(get_style, s.bevy_style, color);
                 add_if_not_none!(get_style, s.bevy_style, background_color);
