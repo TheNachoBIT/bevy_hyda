@@ -208,30 +208,74 @@ impl BevyHydaStyle {
                     });
                 },
 
+                // For some reason, this doesn't change the Some(UiRect) values individually.
+                // So we have to do the Some(UiRect) all over again.
                 Property::MarginTop(v) => {
-                    final_margin.unwrap().top = css_length_percentage_or_auto_to_bevy_val(v.clone());
+                    final_margin = Some(UiRect { 
+                        top: css_length_percentage_or_auto_to_bevy_val(v.clone()),
+                        bottom: final_margin.unwrap().bottom,
+                        left: final_margin.unwrap().left,
+                        right: final_margin.unwrap().right
+                    });
                 },
                 Property::MarginBottom(v) => {
-                    final_margin.unwrap().bottom = css_length_percentage_or_auto_to_bevy_val(v.clone());
+                    final_margin = Some(UiRect { 
+                        top: final_margin.unwrap().top,
+                        bottom: css_length_percentage_or_auto_to_bevy_val(v.clone()),
+                        left: final_margin.unwrap().left,
+                        right: final_margin.unwrap().right
+                    });
                 },
                 Property::MarginLeft(v) => {
-                    final_margin.unwrap().left = css_length_percentage_or_auto_to_bevy_val(v.clone());
+                    final_margin = Some(UiRect { 
+                        top: final_margin.unwrap().top,
+                        bottom: final_margin.unwrap().bottom,
+                        left: css_length_percentage_or_auto_to_bevy_val(v.clone()),
+                        right: final_margin.unwrap().right
+                    });
                 },
                 Property::MarginRight(v) => {
-                    final_margin.unwrap().right = css_length_percentage_or_auto_to_bevy_val(v.clone());
+                    final_margin = Some(UiRect { 
+                        top: final_margin.unwrap().top,
+                        bottom: final_margin.unwrap().bottom,
+                        left: final_margin.unwrap().left,
+                        right: css_length_percentage_or_auto_to_bevy_val(v.clone())
+                    });
                 },
 
+                // For some reason, this doesn't change the Some(UiRect) values individually.
+                // So we have to do the Some(UiRect) all over again.
                 Property::PaddingTop(v) => {
-                    final_padding.unwrap().top = css_length_percentage_or_auto_to_bevy_val(v.clone());
+                    final_padding = Some(UiRect { 
+                        top: css_length_percentage_or_auto_to_bevy_val(v.clone()),
+                        bottom: final_padding.unwrap().bottom,
+                        left: final_padding.unwrap().left,
+                        right: final_padding.unwrap().right
+                    });
                 },
                 Property::PaddingBottom(v) => {
-                    final_padding.unwrap().bottom = css_length_percentage_or_auto_to_bevy_val(v.clone());
+                    final_padding = Some(UiRect { 
+                        top: final_padding.unwrap().top,
+                        bottom: css_length_percentage_or_auto_to_bevy_val(v.clone()),
+                        left: final_padding.unwrap().left,
+                        right: final_padding.unwrap().right
+                    });
                 },
                 Property::PaddingLeft(v) => {
-                    final_padding.unwrap().left = css_length_percentage_or_auto_to_bevy_val(v.clone());
+                    final_padding = Some(UiRect { 
+                        top: final_padding.unwrap().top,
+                        bottom: final_padding.unwrap().bottom,
+                        left: css_length_percentage_or_auto_to_bevy_val(v.clone()),
+                        right: final_padding.unwrap().right
+                    });
                 },
                 Property::PaddingRight(v) => {
-                    final_padding.unwrap().right = css_length_percentage_or_auto_to_bevy_val(v.clone());
+                    final_padding = Some(UiRect { 
+                        top: final_padding.unwrap().top,
+                        bottom: final_padding.unwrap().bottom,
+                        left: final_padding.unwrap().left,
+                        right: css_length_percentage_or_auto_to_bevy_val(v.clone())
+                    });
                 },
                 _ => todo!()
             }
