@@ -31,6 +31,8 @@ use lightningcss::properties::Property::Margin;
 use lightningcss::properties::Property::Padding;
 use lightningcss::values::length::LengthPercentageOrAuto;
 
+use lightningcss::properties::display::{Display, DisplayPair, DisplayOutside, DisplayInside};
+
 #[derive(Component, Default)]
 pub struct HydaScrolling {
     position: f32,
@@ -68,8 +70,12 @@ pub struct BevyHydaStyle {
     width: Option<Val>,
     height: Option<Val>,
     flex_direction: Option<bevy::ui::FlexDirection>,
+    flex_wrap: Option<bevy::ui::FlexWrap>,
     margin: Option<UiRect>,
     padding: Option<UiRect>,
+    display: Option<lightningcss::properties::display::Display>,
+    justify_content: Option<bevy::ui::JustifyContent>,
+    align_content: Option<bevy::ui::AlignContent>,
 }
 
 impl Default for BevyHydaStyle {
@@ -82,8 +88,19 @@ impl Default for BevyHydaStyle {
             width: Some(Val::Auto),
             height: Some(Val::Auto),
             flex_direction: Some(bevy::ui::FlexDirection::Column),
+            flex_wrap: Some(bevy::ui::FlexWrap::NoWrap),
             margin: Some(UiRect::all(Val::Px(0.0))),
             padding: Some(UiRect::all(Val::Px(0.0))),
+            display: Some(lightningcss::properties::display::Display::Pair(
+                DisplayPair
+                {
+                    outside: DisplayOutside::Block,
+                    inside: DisplayInside::Flow,
+                    is_list_item: false,
+                })
+            ),
+            justify_content: Some(bevy::ui::JustifyContent::Default),
+            align_content: Some(bevy::ui::AlignContent::Default),
         }
     }
 }
@@ -169,6 +186,62 @@ fn css_flex_direction_to_bevy_flex_direction(fd: lightningcss::properties::flex:
     }
 }
 
+fn css_flex_wrap_to_bevy_flex_wrap(fw: lightningcss::properties::flex::FlexWrap) -> bevy::ui::FlexWrap {
+    match fw {
+        lightningcss::properties::flex::FlexWrap::NoWrap => bevy::ui::FlexWrap::NoWrap,
+        lightningcss::properties::flex::FlexWrap::Wrap => bevy::ui::FlexWrap::Wrap,
+        lightningcss::properties::flex::FlexWrap::WrapReverse => bevy::ui::FlexWrap::WrapReverse,
+    }
+}
+
+fn css_justify_content_to_bevy_justify_content(jc: lightningcss::properties::align::JustifyContent) -> bevy::ui::JustifyContent {
+    match jc {
+        lightningcss::properties::align::JustifyContent::Normal => { return bevy::ui::JustifyContent::Default; },
+        lightningcss::properties::align::JustifyContent::ContentDistribution(cond) => {
+            match cond {
+                lightningcss::properties::align::ContentDistribution::SpaceBetween => { return bevy::ui::JustifyContent::SpaceBetween; },
+                lightningcss::properties::align::ContentDistribution::SpaceAround => { return bevy::ui::JustifyContent::SpaceAround; },
+                lightningcss::properties::align::ContentDistribution::SpaceEvenly => { return bevy::ui::JustifyContent::SpaceEvenly; },
+                lightningcss::properties::align::ContentDistribution::Stretch => { return bevy::ui::JustifyContent::Stretch; },
+            }
+        },
+        lightningcss::properties::align::JustifyContent::ContentPosition { value, .. } => {
+            match value {
+                lightningcss::properties::align::ContentPosition::Center => { return bevy::ui::JustifyContent::Center; },
+                lightningcss::properties::align::ContentPosition::Start => { return bevy::ui::JustifyContent::Start; },
+                lightningcss::properties::align::ContentPosition::End => { return bevy::ui::JustifyContent::End; },
+                lightningcss::properties::align::ContentPosition::FlexStart => { return bevy::ui::JustifyContent::FlexStart; },
+                lightningcss::properties::align::ContentPosition::FlexEnd => { return bevy::ui::JustifyContent::FlexEnd; },
+            }
+        },
+        _ => todo!()
+    }
+}
+
+fn css_align_content_to_bevy_align_content(ac: lightningcss::properties::align::AlignContent) -> bevy::ui::AlignContent {
+    match ac {
+        lightningcss::properties::align::AlignContent::Normal => { return bevy::ui::AlignContent::Default; },
+        lightningcss::properties::align::AlignContent::ContentDistribution(cond) => {
+            match cond {
+                lightningcss::properties::align::ContentDistribution::SpaceBetween => { return bevy::ui::AlignContent::SpaceBetween; },
+                lightningcss::properties::align::ContentDistribution::SpaceAround => { return bevy::ui::AlignContent::SpaceAround; },
+                lightningcss::properties::align::ContentDistribution::SpaceEvenly => { return bevy::ui::AlignContent::SpaceEvenly; },
+                lightningcss::properties::align::ContentDistribution::Stretch => { return bevy::ui::AlignContent::Stretch; },
+            }
+        },
+        lightningcss::properties::align::AlignContent::ContentPosition { value, .. } => {
+            match value {
+                lightningcss::properties::align::ContentPosition::Center => { return bevy::ui::AlignContent::Center; },
+                lightningcss::properties::align::ContentPosition::Start => { return bevy::ui::AlignContent::Start; },
+                lightningcss::properties::align::ContentPosition::End => { return bevy::ui::AlignContent::End; },
+                lightningcss::properties::align::ContentPosition::FlexStart => { return bevy::ui::AlignContent::FlexStart; },
+                lightningcss::properties::align::ContentPosition::FlexEnd => { return bevy::ui::AlignContent::FlexEnd; },
+            }
+        },
+        _ => todo!()
+    }
+}
+
 impl BevyHydaStyle {
     pub fn from_lcss(declarations: &Vec<Property>, important_declarations: &Vec<Property>) -> Self {
 
@@ -179,8 +252,12 @@ impl BevyHydaStyle {
         let mut final_width: Option<Val> = None;
         let mut final_height: Option<Val> = None;
         let mut final_flex_direction: Option<bevy::ui::FlexDirection> = None;
+        let mut final_flex_wrap: Option<bevy::ui::FlexWrap> = None;
         let mut final_margin: Option<UiRect> = Some(UiRect::all(Val::Px(0.0)));
         let mut final_padding: Option<UiRect> = Some(UiRect::all(Val::Px(0.0)));
+        let mut final_display: Option<lightningcss::properties::display::Display> = None;
+        let mut final_justify_content: Option<bevy::ui::JustifyContent> = None;
+        let mut final_align_content: Option<bevy::ui::AlignContent> = None;
 
         for i in declarations {
             match i {
@@ -191,6 +268,7 @@ impl BevyHydaStyle {
                 Property::Width(w) => final_width = Some(css_size_to_bevy_val(w.clone())),
                 Property::Height(h) => final_height = Some(css_size_to_bevy_val(h.clone())),
                 Property::FlexDirection(fd, _) => final_flex_direction = Some(css_flex_direction_to_bevy_flex_direction(fd.clone())),
+                Property::FlexWrap(fw, _) => final_flex_wrap = Some(css_flex_wrap_to_bevy_flex_wrap(fw.clone())),
                 Property::Margin(m) => { 
                     final_margin = Some(UiRect {
                         left: css_length_percentage_or_auto_to_bevy_val(m.left.clone()),
@@ -277,6 +355,10 @@ impl BevyHydaStyle {
                         right: css_length_percentage_or_auto_to_bevy_val(v.clone())
                     });
                 },
+
+                Property::Display(d) => final_display = Some(d.clone()),
+                Property::JustifyContent(jc, _) => final_justify_content = Some(css_justify_content_to_bevy_justify_content(jc.clone())),
+                Property::AlignContent(ac, _) => final_align_content = Some(css_align_content_to_bevy_align_content(ac.clone())),
                 _ => todo!()
             }
         }
@@ -289,8 +371,12 @@ impl BevyHydaStyle {
             width: final_width,
             height: final_height,
             flex_direction: final_flex_direction,
+            flex_wrap: final_flex_wrap,
             margin: final_margin,
             padding: final_padding,
+            display: final_display,
+            justify_content: final_justify_content,
+            align_content: final_align_content,
         }
     }
 }
@@ -306,6 +392,14 @@ macro_rules! add_if_not_none {
     ($a:ident, $b:expr, $value:ident) => {
         if $b.$value != None {
             $a.$value = $b.$value;
+        }
+    }
+}
+
+macro_rules! add_clone_if_not_none {
+    ($a:ident, $b:expr, $value:ident) => {
+        if $b.$value != None {
+            $a.$value = $b.$value.clone();
         }
     }
 }
@@ -332,6 +426,11 @@ fn compose_final_style(styles: &Vec<HydaStyleSheet>, parent_style: &BevyHydaStyl
                 add_if_not_none!(get_style, s.bevy_style, flex_direction);
                 add_if_not_none!(get_style, s.bevy_style, margin);
                 add_if_not_none!(get_style, s.bevy_style, padding);
+
+                add_clone_if_not_none!(get_style, s.bevy_style, display);
+
+                add_if_not_none!(get_style, s.bevy_style, justify_content);
+                add_if_not_none!(get_style, s.bevy_style, align_content);
             }
         }
     }
@@ -453,15 +552,36 @@ impl HydaAST {
                     }
                 }
 
+                let mut final_display = bevy::ui::Display::Block;
+
+                match style.display.clone().unwrap() {
+                    lightningcss::properties::display::Display::Pair(p) => {
+                        match p.outside {
+                            DisplayOutside::Block => final_display = bevy::ui::Display::Block,
+                            _ => {},
+                        }
+
+                        match p.inside {
+                            DisplayInside::Flex { .. } => final_display = bevy::ui::Display::Flex,
+                            _ => {},
+                        }
+                    },
+                    lightningcss::properties::display::Display::Keyword(_) => todo!()
+                }
+
                 let mut result = if !is_tag_inlined_text(&tag_name) {
                     commands.spawn(
                         NodeBundle {
                             style: Style {
+                                display: final_display,
                                 width: style.width.unwrap(),
                                 height: style.height.unwrap(),
                                 flex_direction: style.flex_direction.unwrap(),
+                                flex_wrap: style.flex_wrap.unwrap(),
                                 margin: style.margin.unwrap(),
                                 padding: style.padding.unwrap(),
+                                justify_content: style.justify_content.unwrap(),
+                                align_content: style.align_content.unwrap(),
                                 ..default()
                             },
                             background_color: bevy::prelude::BackgroundColor(style.background_color.unwrap()),
